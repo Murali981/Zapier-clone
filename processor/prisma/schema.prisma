@@ -14,21 +14,23 @@ datasource db {
 }
 
 
-
  model User{
   id Int @id @default(autoincrement())
   name String
   email String
   password String
+  zaps Zap[]
  }
 
 
  model Zap { // Every Zap will have a trigger and a bunch of actions according to the Zapier website
   id String @id @default(uuid())
   triggerId String
+  userId Int
   trigger Trigger?
   actions Action[]
   zapRuns ZapRun[]
+  user User @relation(fields: [userId] , references: [id])
  }
 
 
@@ -48,6 +50,7 @@ datasource db {
   zap Zap @relation(fields: [zapId] , references: [id])
   actionId String
   type AvailableAction @relation(fields: [actionId] , references: [id])
+  sortingOrder Int @default(0)
  }
 
 
@@ -79,4 +82,3 @@ datasource db {
   zapRunId String @unique
   zapRun ZapRun @relation(fields: [zapRunId] , references: [id])
  }
-
