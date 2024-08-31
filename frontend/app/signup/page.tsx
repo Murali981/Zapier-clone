@@ -4,8 +4,16 @@ import { Appbar } from "@/components/Appbar";
 import { PrimaryButton } from "@/components/buttons/PrimaryButton";
 import { CheckFeature } from "@/components/CheckFeature";
 import { Input } from "@/components/Input";
+import axios from "axios";
+import { useState } from "react";
+import { BACKEND_URL } from "../config";
+import { useRouter } from "next/navigation";
 
-export default function signup() {
+export default function Signup() {
+  const router = useRouter();
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   return (
     <div>
       <Appbar />
@@ -26,24 +34,43 @@ export default function signup() {
           <div className="flex-1 pt-6 pb-6 mt-12 px-4 border rounded">
             <Input
               label={"Name"}
-              onChange={(e) => {}}
+              onChange={(e) => {
+                setName(e.target.value);
+              }}
               type="text"
               placeholder="Your name"
             ></Input>
             <Input
               label={"Email"}
-              onChange={(e) => {}}
+              onChange={(e) => {
+                setEmail(e.target.value);
+              }}
               type="text"
               placeholder="Your Email"
             ></Input>
             <Input
               label={"Password"}
-              onChange={(e) => {}}
+              onChange={(e) => {
+                setPassword(e.target.value);
+              }}
               type="password"
               placeholder="Password"
             ></Input>
             <div className="pt-4">
-              <PrimaryButton onClick={() => {}} size="big">
+              <PrimaryButton
+                onClick={async () => {
+                  const res = await axios.post(
+                    `${BACKEND_URL}/api/v1/user/signup`,
+                    {
+                      username: email,
+                      password,
+                      name,
+                    }
+                  );
+                  router.push("/login");
+                }}
+                size="big"
+              >
                 Get started free
               </PrimaryButton>
             </div>
