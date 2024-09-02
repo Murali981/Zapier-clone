@@ -38,4 +38,4 @@ app.post("/hooks/catch/:userId/:zapId", async (req, res) => {
   /// Then push it on to a queue(most probably KAFKA/REDIS)
 });
 
-app.listen(3000);
+app.listen(3002);
