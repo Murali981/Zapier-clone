@@ -21,7 +21,7 @@ interface Zap {
       name: string;
       image: string;
     };
-  }[];
+  }[]; // This is called as array of actions objects
   trigger: {
     id: string;
     zapId: string;

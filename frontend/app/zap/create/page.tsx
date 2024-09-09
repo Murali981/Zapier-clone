@@ -50,6 +50,9 @@ export default function Create() {
     null
   );
 
+  // Function to close the modal
+  const closeModal = () => setSelectedModalIndex(null);
+
   return (
     <div>
       <Appbar />
@@ -164,6 +167,7 @@ export default function Create() {
             }
           }}
           index={selectedModalIndex}
+          closeModal={closeModal}
         />
       )}
     </div>
@@ -174,6 +178,7 @@ function Modal({
   index,
   onSelect,
   availableItems,
+  closeModal,
 }: {
   index: number;
   onSelect: (props: null | { name: string; id: string; metadata: any }) => void;
@@ -182,6 +187,7 @@ function Modal({
     name: string;
     image: string;
   }[];
+  closeModal: () => void;
 }) {
   const [step, setStep] = useState(0);
   const [selectedAction, setSelectedAction] = useState<{
@@ -234,6 +240,7 @@ function Modal({
                     metadata,
                   });
                 }}
+                closeModal={closeModal}
               />
             )}
 
@@ -245,6 +252,7 @@ function Modal({
                     metadata,
                   });
                 }}
+                closeModal={closeModal} // Pass closeModal function to handle modal closure
               />
             )}
 
@@ -254,13 +262,13 @@ function Modal({
                   return (
                     <div
                       onClick={() => {
-                        console.log("Trigger is clicked");
                         if (isTrigger) {
                           onSelect({
                             id,
                             name,
                             metadata: {},
                           });
+                          closeModal();
                         } else {
                           setStep((s) => s + 1);
                           setSelectedAction({
@@ -293,8 +301,10 @@ function Modal({
 
 function EmailSelector({
   setMetadata,
+  closeModal,
 }: {
   setMetadata: (params: any) => void;
+  closeModal: () => void;
 }) {
   const [email, setEmail] = useState("");
   const [body, setBody] = useState("");
@@ -316,6 +326,7 @@ function EmailSelector({
         <PrimaryButton
           onClick={() => {
             setMetadata({ email, body });
+            closeModal();
           }}
         >
           Send
@@ -327,8 +338,10 @@ function EmailSelector({
 
 function SolanaSelector({
   setMetadata,
+  closeModal,
 }: {
   setMetadata: (params: any) => void;
+  closeModal: () => void;
 }) {
   const [address, setAddress] = useState("");
   const [amount, setAmount] = useState("");
@@ -350,6 +363,7 @@ function SolanaSelector({
         <PrimaryButton
           onClick={() => {
             setMetadata({ amount, address });
+            closeModal();
           }}
         >
           Submit

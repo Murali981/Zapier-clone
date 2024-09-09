@@ -38,4 +38,6 @@ app.post("/hooks/catch/:userId/:zapId", async (req, res) => {
   /// Then push it on to a queue(most probably KAFKA/REDIS)
 });
 
-app.listen(3002);
+app.listen(3003, () => {
+  console.log("This port is running on 3003");
+});
