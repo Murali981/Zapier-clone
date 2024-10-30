@@ -85,3 +85,19 @@ datasource db {
   zapRunId String @unique
   zapRun ZapRun @relation(fields: [zapRunId] , references: [id])
  }
+
+ model GithubBountyRun {
+  id String @id @default(uuid())
+  amount Float
+  recipientAddress String  // Solana address
+  recipientEmail String   // Email of the solver
+  githubBountyOutbox GithubBountyOutbox?
+  createdAt DateTime @default(now())
+}
+
+model GithubBountyOutbox {
+  id String @id @default(uuid())
+  bountyRunId String @unique
+  bountyRun GithubBountyRun @relation(fields: [bountyRunId], references: [id])
+  createdAt DateTime @default(now())
+}

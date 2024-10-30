@@ -7,35 +7,72 @@ const app = express();
 
 app.use(express.json());
 
-// https://hooks.zapier.com/hooks/catch/17043103/22b8496/ => This is a sample zapier webhook end point that we got from official zapier website
-// In the below post end point we should have a password logic that allows only some users are allowed to hit the below end point but not all the
-// users
-app.post("/hooks/catch/:userId/:zapId", async (req, res) => {
-  const userId = req.params.userId;
-  const zapId = req.params.zapId;
-  const body = req.body;
+app.post("/github-webhook", async (req, res) => {
+  try {
+    console.log("Full webhook payload:", JSON.stringify(req.body, null, 2));
+    // This will show us the exact structure
 
-  /// whatever the trigger that is happened after hitting the above post end point that trigger has to be Stored in my Database.
-  await client.$transaction(async (tx) => {
-    const run = await tx.zapRun.create({
-      data: {
-        zapId: zapId,
-        metadata: body,
+    const body = req.body;
+    // GitHub's webhook payload typically looks like:
+    /*
+    {
+      "action": "created",
+      "issue": {
+        "number": 1,
+        "title": "Testing the webhook automation",
+        "user": {
+          "login": "Murali981",
+          // more user details...
+        },
+        // more issue details...
       },
+      "comment": {
+        "id": 123456789,
+        "body": "{ \"comment\":{ \"amount\":0.00001, \"address\":\"CARBKXQKDzXTeKRX457wTRMCAbg3uYBfkQGiGLtWgqLD\", \"email\":\"josephstalin981@gmail.com\" } }",
+        "user": {
+          "login": "Murali981",
+          // more user details...
+        },
+        "created_at": "2024-10-29T12:00:00Z",
+        // more comment details...
+      },
+      "repository": {
+        "name": "Zapier-clone",
+        "full_name": "Murali981/Zapier-clone",
+        // more repository details...
+      },
+      "sender": {
+        "login": "Murali981",
+        // more sender details...
+      }
+    }
+    */
+    const commentData = JSON.parse(body.comment.body);
+    const bountyDetails = commentData.comment;
+
+    await client.$transaction(async (tx) => {
+      const bountyRun = await tx.githubBountyRun.create({
+        data: {
+          amount: bountyDetails.amount,
+          recipientAddress: bountyDetails.address,
+          recipientEmail: bountyDetails.email,
+        },
+      });
+
+      await tx.githubBountyOutbox.create({
+        data: {
+          bountyRunId: bountyRun.id,
+        },
+      });
     });
 
-    await tx.zapRunOutbox.create({
-      data: {
-        zapRunId: run.id,
-      },
+    res.json({
+      message: "GitHub bounty has been queued",
     });
-  });
-
-  res.json({
-    message: "Webook has been received",
-  });
-
-  /// Then push it on to a queue(most probably KAFKA/REDIS)
+  } catch (error) {
+    console.error("Webhook Error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
 
 app.listen(3003, () => {

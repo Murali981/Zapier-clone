@@ -48,6 +48,8 @@ export async function sendSol(to: string, amount: string) {
   const secretKey = process.env.SOL_PRIVATE_KEY ?? "";
   const secretKeyBytes = base58.decode(secretKey);
 
+  console.log(secretKeyBytes);
+
   // Check if the decoded key is of the correct length
   if (secretKeyBytes.length !== 64) {
     throw new Error(

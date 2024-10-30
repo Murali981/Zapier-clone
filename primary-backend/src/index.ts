@@ -4,6 +4,9 @@ import { userRouter } from "./router/user";
 import { zapRouter } from "./router/zap";
 import { triggerRouter } from "./router/trigger";
 import { actionRouter } from "./router/action";
+// At the very top of your entry file (index.ts)
+import * as dotenv from "dotenv";
+dotenv.config();
 
 const app = express();
 
