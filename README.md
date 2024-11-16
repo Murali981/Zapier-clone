@@ -1,3 +1,7 @@
+
+
+https://github.com/user-attachments/assets/9e35b9a0-5b66-4757-b631-830b29a30dad
+
 AutomateX: GitHub Bounty Automation System
 AutomateX is an innovative GitHub integration platform that automates Solana token disbursement for open-source contributions. The system monitors GitHub repository activities and automatically processes bounty payments when project owners approve contributions through comments.
 🌟 Features
